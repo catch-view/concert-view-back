@@ -1,11 +1,41 @@
-import { IsArray, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsString,
+  IsDate,
+  Length,
+  Matches,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 
 export class CreatePostDto {
-  postImages: string[];
+  @IsString()
+  placeID: string;
 
   @IsString()
-  postHtml: string;
+  @Matches(/^[가-힣|]+$/)
+  @MinLength(2)
+  @MaxLength(8)
+  author: string;
 
+  @IsString()
+  @Length(4)
+  password: string;
+
+  @IsArray()
+  tags: [];
+
+  @IsArray()
+  images: string[];
+
+  @IsString()
+  @MinLength(2)
+  @MaxLength(40)
+  title: string;
+
+  @IsString()
+  html: string;
+
+  @IsDate()
   createdAt: string;
-  updatedAt: string;
 }

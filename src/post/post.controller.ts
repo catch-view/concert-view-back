@@ -10,6 +10,7 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { UpdatePostDto } from './dtos/update-post.dto';
+import { GetPostsResponse } from './dtos/get-posts.response';
 
 @Controller('post')
 export class PostController {
@@ -22,17 +23,17 @@ export class PostController {
    */
   @Post('create')
   async create(@Body() createPostDto: CreatePostDto) {
-    const res = await this.postService.create(createPostDto);
-    console.log(res, 'TEST');
-    return res;
+    console.log(createPostDto, 'TEST');
+    return await this.postService.create(createPostDto);
   }
 
-  @Get('/test')
-  findAll() {
-    console.log('test');
-    return {
-      msg: 'no',
-    };
+  /**
+   * postID에 해당하는 post 전부 조회
+   * @returns
+   */
+  @Get(':id')
+  findAll(@Param('id') id: string): Promise<GetPostsResponse[]> {
+    return this.postService.findAll(id);
   }
 
   @Get(':id')

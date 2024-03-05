@@ -18,6 +18,15 @@ export class Post {
   password: string;
 
   @Prop()
+  tags?: [];
+
+  @Prop()
+  images: string[];
+
+  @Prop()
+  title: string;
+
+  @Prop()
   html: string;
 
   @Prop()
