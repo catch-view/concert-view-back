@@ -10,6 +10,8 @@ import { FirebaseService } from 'src/firebase/firebase.service';
 import { Post } from './schemas/post.schema';
 import { SuccessResponse } from 'src/common/interfaces/success.response';
 import { GetPostsResponse } from './dtos/get-posts.response';
+import { GET_POSTS_LIMIT } from './variables';
+import { GetPostsDto } from './dtos/get-posts.dto';
 
 @Injectable()
 export class PostService {
@@ -57,12 +59,17 @@ export class PostService {
     }
   }
 
-  async findAll(id: string) {
+  async findAll(getPostsDto: GetPostsDto) {
+    const totalCount = await this.postModel.countDocuments();
+    const isLastPage = getPostsDto.page * GET_POSTS_LIMIT >= totalCount;
+    const nextPage = isLastPage ? undefined : getPostsDto.page + 1;
+    const SKIP_NUM = (Number(getPostsDto.page) - 1) * GET_POSTS_LIMIT;
     const posts = await this.postModel
-      .find({ placeID: id })
-      .select('-password -__v')
+      .find({ placeID: getPostsDto.placeID })
+      .skip(SKIP_NUM)
+      .limit(GET_POSTS_LIMIT)
       .exec();
-    const res = posts.map((post) => ({
+    const items = posts.map((post) => ({
       postID: post._id,
       placeID: post.placeID,
       author: post.author,
@@ -72,7 +79,13 @@ export class PostService {
       html: post.html,
       createdAt: post.createdAt,
     }));
-    return res;
+    return {
+      items: items,
+      totalCount: totalCount,
+      currentPage: getPostsDto.page,
+      nextPage,
+      isLastPage: isLastPage,
+    };
   }
 
   findOne(id: number) {

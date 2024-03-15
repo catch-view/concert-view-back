@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { CreatePostDto } from './dtos/create-post.dto';
-import { UpdatePostDto } from './dtos/update-post.dto';
-import { GetPostsResponse } from './dtos/get-posts.response';
-
+import {
+  CreatePostDto,
+  UpdatePostDto,
+  GetPostsDto,
+  GetPostsResponse,
+} from './dtos';
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -23,7 +26,7 @@ export class PostController {
    */
   @Post('create')
   async create(@Body() createPostDto: CreatePostDto) {
-    console.log(createPostDto, 'TEST');
+    console.log(createPostDto);
     return await this.postService.create(createPostDto);
   }
 
@@ -31,9 +34,9 @@ export class PostController {
    * postID에 해당하는 post 전부 조회
    * @returns
    */
-  @Get(':id')
-  findAll(@Param('id') id: string): Promise<GetPostsResponse[]> {
-    return this.postService.findAll(id);
+  @Get('/:placeID/:page')
+  findAll(@Param() params: GetPostsDto) {
+    return this.postService.findAll(params);
   }
 
   @Get(':id')

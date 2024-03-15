@@ -36,6 +36,6 @@ export class CreatePostDto {
   @IsString()
   html: string;
 
-  @IsDate()
+  @IsString()
   createdAt: string;
 }
